@@ -1,0 +1,49 @@
+/*************************************************************************
+	> File Name: my_ls.c
+	> Author: Chenfan
+	> Mail:994735640@qq.com 
+	> Created Time: Thu 19 Jun 2014 11:56:08 PM PDT
+ ************************************************************************/
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<sys/types.h>
+#include<dirent.h>
+#include<sys/stat.h>
+int main (int argc, char *argv [])
+{
+	DIR  *pDIR ;
+	struct stat mystat ;
+	struct dirent *myent ;
+	int col = 0 ;
+	if( argc == 1 )
+	{
+		pDIR = opendir ( "." ) ;
+	}
+	else
+	{
+		pDIR = opendir(argv[1]) ;
+	}
+	
+	if( pDIR == NULL )
+	{
+		perror ("File failed !\n") ;
+		exit(-1) ;
+	}
+	while((myent = readdir (pDIR))!= NULL )
+	{
+		memset( &mystat,1, sizeof(mystat)) ;
+		stat (myent -> d_name, &mystat) ;
+		if ( strncmp(myent -> d_name, ".", 1)!= 0&& strncmp(myent ->d_name, ".",2) != 0 )
+		{
+			printf("%2d,%x,%d,%d,%d,%ld,%-10s\n",mystat.st_ino, mystat.st_mode, mystat.st_uid, mystat.st_gid, mystat.st_size, mystat.st_atime, myent -> d_name ) ;
+			col ++ ;
+			if(col % 5 == 0)
+			{
+				printf("\n") ;
+			}
+		}
+	}
+
+	return 0 ;
+}
